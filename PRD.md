@@ -40,14 +40,14 @@ Because the client brief was incomplete, the following assumptions were made and
 
 | # | Assumption | Rationale | Risk if Wrong |
 |---|-----------|-----------|---------------|
-| A1 | **Transcripts are sourced from the public ChatPRD/lennys-podcast-transcripts GitHub repo** — 269 episodes in Markdown with YAML frontmatter (guest, title, youtube_url, publish_date, duration). Organized as `episodes/{guest-name}/transcript.md`. | The assessment references "Lenny's Podcast / Newsletter transcript repository" — this is the canonical community archive. | If the repo is removed or restructured, we retain a local copy in `data/transcripts/`. |
+| A1 | **Transcripts are sourced from the public ChatPRD/lennys-podcast-transcripts GitHub repo** — 303 episodes in Markdown with YAML frontmatter (guest, title, youtube_url, publish_date, duration). Organized as `episodes/{guest-name}/transcript.md`. | The assessment references "Lenny's Podcast / Newsletter transcript repository" — this is the canonical community archive. | If the repo is removed or restructured, we retain a local copy in `data/transcripts/`. |
 | A2 | **Single-tenant, no authentication required** — the evaluator runs this locally. | Brief implies internal tool for a product/growth team, not a SaaS product. | If multi-tenancy is needed, we must add auth (OAuth2/API keys) post-MVP. |
 | A3 | **No real-time transcript updates** — knowledge base is static at deployment, refreshed manually. | Building a live ingestion pipeline is out of scope for a take-home. | If freshness is critical, we add a webhook/cron job later. |
 | A4 | **"Ship 30 for 30" style means:** ~1,250 words, strong hook, narrative arc, skimmable formatting, specific takeaway, grounded in sources. | Based on Ship 30 for 30 public methodology. | If style expectations differ, we adjust the skill prompt. |
 | A5 | **Local demo machine has 16GB+ RAM and a modern CPU** — Ollama with 8B parameter models runs comfortably. | Standard developer laptop spec. | If evaluator has less RAM, we document lighter model options (`phi3:mini`). |
 | A6 | **Evaluator has Docker, Docker Compose, and Ollama installed** — or is willing to install them. | Standard forward-deployed engineer toolchain. | We provide native setup instructions as fallback. |
 | A7 | **Grounding means citation, not quotation** — answers should reference episode/guest/timestamp, not necessarily quote verbatim. | More natural conversational flow. | If verbatim quotes required, we adjust RAG prompt. |
-| A8 | **We ingest all 269 episodes** — the full ChatPRD archive is small enough (~50-100MB text) to process in a single ingestion run. | Maximizes knowledge coverage for the evaluator demo. | If too slow, we can ingest a subset of 30-50 high-relevance episodes. |
+| A8 | **We ingest all 303 episodes** — the full ChatPRD archive is small enough (~50-100MB text) to process in a single ingestion run. | Maximizes knowledge coverage for the evaluator demo. | If too slow, we can ingest a subset of 30-50 high-relevance episodes. |
 
 ### 1.4 Scope Choices
 
@@ -165,7 +165,7 @@ Because the client brief was incomplete, the following assumptions were made and
 - **FR-A2:** System can generate self-contained HTML/CSS snippets
 - **FR-A3:** Artifacts are stored in PostgreSQL with metadata (type, title, created_at)
 - **FR-A4:** HTML artifacts are sanitized server-side before storage
-- **FR-A5:** Frontend renders HTML in sandboxed iframe with `sandbox="allow-scripts"` (no forms, no popups)
+- **FR-A5:** Frontend renders HTML in sandboxed iframe with `sandbox=""` (no forms, no popups)
 - **FR-A6:** Markdown artifacts are rendered with a safe markdown parser (no raw HTML injection)
 - **FR-A7:** User can view, copy, and download artifacts
 
@@ -282,7 +282,7 @@ Then the app starts, DB migrations run, and I can access the UI at `http://local
 
 ## 7. Open Questions
 
-1. ~~What is the exact source of Lenny's transcripts?~~ **RESOLVED:** Using `ChatPRD/lennys-podcast-transcripts` GitHub repo (269 episodes, Markdown + YAML frontmatter).
+1. ~~What is the exact source of Lenny's transcripts?~~ **RESOLVED:** Using `ChatPRD/lennys-podcast-transcripts` GitHub repo (303 episodes, Markdown + YAML frontmatter).
 2. Does the evaluator expect real-time streaming responses or are synchronous responses acceptable? **Decision:** Implement streaming (SSE) — it's expected for a polished chat UX and handles local model latency gracefully.
 3. Should the Ship 30for30 skill be triggered by explicit user request only, or can the agent proactively suggest it? **Decision:** Explicit trigger only. Proactive suggestions feel intrusive for an MVP.
 

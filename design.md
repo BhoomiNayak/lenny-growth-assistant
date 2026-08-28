@@ -373,7 +373,7 @@ interface SourceCitationProps {
 
 <!-- Artifact viewer -->
 <aside aria-label="Artifact viewer">
-  <iframe title="Artifact preview" sandbox="allow-scripts"></iframe>
+    <iframe title="Artifact preview" sandbox=""></iframe>
 </aside>
 ```
 

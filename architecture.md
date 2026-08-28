@@ -21,10 +21,10 @@
               │ (iframe)     │    └──────┬───────┘
               └──────────────┘           │
                                          ▼
-                              ┌──────────────────────┐
-                              │  Agent Orchestrator  │
-                              │  (Claude Agent SDK)  │
-                              └──────────┬───────────┘
+┌──────────────────────┐
+│  Agent Orchestrator  │
+│  (custom + httpx)    │
+└──────────┬───────────┘
                                          │
                     ┌────────────────────┼────────────────────┐
                     ▼                    ▼                    ▼
@@ -259,7 +259,7 @@ data: {"type": "error", "code": "LLM_UNAVAILABLE", "message": "Ollama is not run
 │  - ArtifactService                      │
 ├─────────────────────────────────────────┤
 │           Agent Layer                   │
-│  (Claude Agent SDK + Skills)            │
+│  (Custom Orchestrator + httpx + Skills)│
 │  - BaseAgent                            │
 │  - RAGSkill                             │
 │  - Ship30Skill                          │
@@ -305,7 +305,7 @@ PostgreSQL
 ### 5.1 Transcript Ingestion Pipeline
 
 **Data Source:** `https://github.com/ChatPRD/lennys-podcast-transcripts`
-- 269 episodes in `episodes/{guest-name}/transcript.md`
+- 303 episodes in `episodes/{guest-name}/transcript.md`
 - YAML frontmatter: `guest`, `title`, `youtube_url`, `video_id`, `publish_date`, `description`, `duration_seconds`, `duration`, `view_count`, `channel`
 - Topic index in `index/` with 50+ keyword files
 
@@ -637,7 +637,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5440:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U lenny"]
       interval: 5s
@@ -650,9 +650,17 @@ services:
       - DATABASE_URL=postgresql+asyncpg://lenny:lenny@db:5432/lenny_assistant
       - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b}
+      - OLLAMA_EMBEDDING_MODEL=${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-3-5-sonnet-20241022}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_EMBEDDING_MODEL=${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+      - CORS_ORIGINS=http://localhost:3010,http://127.0.0.1:3010
+      - APP_ENV=${APP_ENV:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -664,14 +672,14 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "3000:3000"
+      - "3010:3000"
     depends_on:
       - backend
     volumes:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - VITE_API_URL=http://localhost:8001
 
 volumes:
   postgres_data:
@@ -681,7 +689,7 @@ volumes:
 
 ```bash
 # .env.example
-DATABASE_URL=postgresql+asyncpg://lenny:lenny@localhost:5432/lenny_assistant
+DATABASE_URL=postgresql+asyncpg://lenny:lenny@localhost:5440/lenny_assistant
 
 LLM_PROVIDER=ollama
 
@@ -697,7 +705,7 @@ OPENAI_EMBEDDING_MODEL=text-embedding-3-small
 
 APP_ENV=development
 LOG_LEVEL=INFO
-CORS_ORIGINS=http://localhost:3000
+CORS_ORIGINS=http://localhost:3010,http://127.0.0.1:3010
 ```
 
 ### 9.3 Startup Sequence
@@ -707,9 +715,9 @@ CORS_ORIGINS=http://localhost:3000
 2. PostgreSQL starts, creates DB, enables pgvector
 3. Backend waits for DB healthcheck
 4. Alembic runs migrations
-5. Backend starts FastAPI on :8000
-6. Frontend starts Vite dev server on :3000
-7. Evaluator opens http://localhost:3000
+5. Backend starts FastAPI on :8001
+6. Frontend starts Vite dev server on :3010
+7. Evaluator opens http://localhost:3010
 ```
 
 ---
