@@ -40,7 +40,7 @@ The commands below are copy-paste ready. Windows users: use the PowerShell varia
 ### 1. Clone the project
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/lenny-growth-assistant.git
+git clone https://github.com/BhoomiNayak/lenny-growth-assistant.git
 cd lenny-growth-assistant
 ```
 
