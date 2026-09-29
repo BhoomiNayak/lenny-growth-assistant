@@ -1,6 +1,5 @@
 # The Lenny Growth Assistant
 
-> **Forward Deployed Engineer Take-Home Assessment**
 > A full-stack, AI-powered conversational web app that turns Lenny's Podcast transcripts
 > into a reliable internal assistant — grounded RAG answers, Ship 30 for 30 essays, and
 > rendered Markdown/HTML artifacts, running fully local on Ollama (with an optional cloud toggle).
@@ -250,16 +249,14 @@ you only edit `.env` for host-run ingestion or to add cloud keys.
 
 ---
 
-## Deliverables Map
+## Documentation
 
-| Deliverable | Location |
-|-------------|----------|
-| Source code | this repo |
-| README | this file |
-| PRD | [`PRD.md`](./PRD.md) |
-| Design | [`design.md`](./design.md) |
+| Document | Location |
+|----------|----------|
+| Product requirements | [`PRD.md`](./PRD.md) |
+| Design & UX | [`design.md`](./design.md) |
 | Architecture | [`architecture.md`](./architecture.md) |
-| Agent transcripts | [`agent-transcripts/`](./agent-transcripts/) |
+| Build journey / dev logs | [`agent-transcripts/`](./agent-transcripts/) |
 | Tests | `backend/tests/` + [`MANUAL_TEST_PLAN.md`](./MANUAL_TEST_PLAN.md) |
 
 ---
