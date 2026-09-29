@@ -1,4 +1,4 @@
-# Agent Transcripts
+ # Agent Transcripts
 
 This folder documents the AI-assisted development of **The Lenny Growth Assistant**,
 built with the Kiro coding agent. Per the assessment's deliverable #6, it includes the

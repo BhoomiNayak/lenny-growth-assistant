@@ -22,7 +22,9 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://lenny:lenny@db:5432/lenny_assistant
       - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
-      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      # Inside the container, host Ollama is reached via host.docker.internal
+      # (macOS/Windows). On Linux, override with OLLAMA_DOCKER_URL=http://172.17.0.1:11434
+      - OLLAMA_BASE_URL=${OLLAMA_DOCKER_URL:-http://host.docker.internal:11434}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b}
       - OLLAMA_EMBEDDING_MODEL=${OLLAMA_EMBEDDING_MODEL:-nomic-embed-text}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
@@ -37,6 +39,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    extra_hosts:
+      # Ensures host.docker.internal resolves to the host on all platforms (incl. Linux)
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./backend:/app
       - ./data:/app/data
